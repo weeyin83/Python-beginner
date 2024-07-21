@@ -7,22 +7,22 @@ class ToDoListApp:
         self.root.title("To-Do List App")
         self.tasks = []
 
-        self.frame = tk.Frame(root)
+        self.frame = tk.Frame(root, bg='white')
         self.frame.pack(pady=10)
 
-        self.task_listbox = tk.Listbox(self.frame, height=10, width=50)
+        self.task_listbox = tk.Listbox(self.frame, height=10, width=50, bg='white', fg='blue', selectbackground='red')
         self.task_listbox.pack(side=tk.LEFT, fill=tk.BOTH)
 
-        self.scrollbar = tk.Scrollbar(self.frame)
+        self.scrollbar = tk.Scrollbar(self.frame, bg='white')
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.BOTH)
 
         self.task_listbox.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.task_listbox.yview)
 
-        self.add_button = tk.Button(root, text="Add Task", command=self.add_task)
+        self.add_button = tk.Button(root, text="Add Task", command=self.add_task, bg='blue', fg='white')
         self.add_button.pack(pady=5)
 
-        self.delete_button = tk.Button(root, text="Delete Task", command=self.delete_task)
+        self.delete_button = tk.Button(root, text="Delete Task", command=self.delete_task, bg='red', fg='white')
         self.delete_button.pack(pady=5)
 
     def add_task(self):
