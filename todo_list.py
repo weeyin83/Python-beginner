@@ -1,15 +1,12 @@
 import tkinter as tk
 from tkinter import simpledialog, messagebox
-import os
+from storage import load_tasks, save_tasks
 
 class ToDoListApp:
     def __init__(self, root):
         self.root = root
         self.root.title("To-Do List App")
-        self.tasks = []
-
-        self.file_path = "tasks.txt"
-        self.load_tasks()
+        self.tasks = load_tasks()
 
         self.frame = tk.Frame(root, bg='white')
         self.frame.pack(pady=10)
@@ -51,23 +48,8 @@ class ToDoListApp:
         self.task_listbox.delete(0, tk.END)
         for task in self.tasks:
             self.task_listbox.insert(tk.END, task)
-        self.save_tasks()
-
-    def load_tasks(self):
-        if os.path.exists(self.file_path):
-            with open(self.file_path, 'r') as file:
-                self.tasks = [line.strip() for line in file.readlines()]
-
-    def save_tasks(self):
-        with open(self.file_path, 'w') as file:
-            for task in self.tasks:
-                file.write(f"{task}\n")
+        save_tasks(self.tasks)
 
     def on_closing(self):
-        self.save_tasks()
+        save_tasks(self.tasks)
         self.root.destroy()
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = ToDoListApp(root)
-    root.mainloop()
