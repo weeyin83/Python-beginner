@@ -1,15 +1,12 @@
 import tkinter as tk
 from tkinter import simpledialog, messagebox
-import os
+from storage import load_tasks, save_tasks
 
 class ToDoListApp:
     def __init__(self, root):
         self.root = root
         self.root.title("To-Do List App")
-        self.tasks = []
-
-        self.file_path = "tasks.txt"
-        self.load_tasks()
+        self.tasks = load_tasks()
 
         self.frame = tk.Frame(root, bg='white')
         self.frame.pack(pady=10)
@@ -29,6 +26,13 @@ class ToDoListApp:
         self.delete_button = tk.Button(root, text="Delete Task", command=self.delete_task, bg='red', fg='white')
         self.delete_button.pack(pady=5)
 
+        # Add the new buttons
+        self.edit_button = tk.Button(root, text="Edit Task", command=self.edit_task, bg='white', fg='black')
+        self.edit_button.pack(pady=5)
+
+        self.complete_button = tk.Button(root, text="Complete Task", command=self.complete_task, bg='green', fg='white')
+        self.complete_button.pack(pady=5)
+
         self.update_tasks()
 
         root.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -47,27 +51,36 @@ class ToDoListApp:
         else:
             messagebox.showwarning("Delete Task", "No task selected.")
 
+    def edit_task(self):
+        selected_task_index = self.task_listbox.curselection()
+        if selected_task_index:
+            current_task = self.tasks[selected_task_index[0]]
+            new_task = simpledialog.askstring("Edit Task", "Edit the task:", initialvalue=current_task)
+            if new_task:
+                self.tasks[selected_task_index[0]] = new_task
+                self.update_tasks()
+        else:
+            messagebox.showwarning("Edit Task", "No task selected.")
+
+    def complete_task(self):
+        selected_task_index = self.task_listbox.curselection()
+        if selected_task_index:
+            task = self.tasks[selected_task_index[0]]
+            if task.startswith("[X] "):
+                task = task[4:]
+            else:
+                task = "[X] " + task
+            self.tasks[selected_task_index[0]] = task
+            self.update_tasks()
+        else:
+            messagebox.showwarning("Complete Task", "No task selected.")
+
     def update_tasks(self):
         self.task_listbox.delete(0, tk.END)
         for task in self.tasks:
             self.task_listbox.insert(tk.END, task)
-        self.save_tasks()
-
-    def load_tasks(self):
-        if os.path.exists(self.file_path):
-            with open(self.file_path, 'r') as file:
-                self.tasks = [line.strip() for line in file.readlines()]
-
-    def save_tasks(self):
-        with open(self.file_path, 'w') as file:
-            for task in self.tasks:
-                file.write(f"{task}\n")
+        save_tasks(self.tasks)
 
     def on_closing(self):
-        self.save_tasks()
+        save_tasks(self.tasks)
         self.root.destroy()
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = ToDoListApp(root)
-    root.mainloop()
