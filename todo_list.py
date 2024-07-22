@@ -26,6 +26,13 @@ class ToDoListApp:
         self.delete_button = tk.Button(root, text="Delete Task", command=self.delete_task, bg='red', fg='white')
         self.delete_button.pack(pady=5)
 
+        # Add the new buttons
+        self.edit_button = tk.Button(root, text="Edit Task", command=self.edit_task, bg='white', fg='black')
+        self.edit_button.pack(pady=5)
+
+        self.complete_button = tk.Button(root, text="Complete Task", command=self.complete_task, bg='green', fg='white')
+        self.complete_button.pack(pady=5)
+
         self.update_tasks()
 
         root.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -43,6 +50,30 @@ class ToDoListApp:
             self.update_tasks()
         else:
             messagebox.showwarning("Delete Task", "No task selected.")
+
+    def edit_task(self):
+        selected_task_index = self.task_listbox.curselection()
+        if selected_task_index:
+            current_task = self.tasks[selected_task_index[0]]
+            new_task = simpledialog.askstring("Edit Task", "Edit the task:", initialvalue=current_task)
+            if new_task:
+                self.tasks[selected_task_index[0]] = new_task
+                self.update_tasks()
+        else:
+            messagebox.showwarning("Edit Task", "No task selected.")
+
+    def complete_task(self):
+        selected_task_index = self.task_listbox.curselection()
+        if selected_task_index:
+            task = self.tasks[selected_task_index[0]]
+            if task.startswith("[X] "):
+                task = task[4:]
+            else:
+                task = "[X] " + task
+            self.tasks[selected_task_index[0]] = task
+            self.update_tasks()
+        else:
+            messagebox.showwarning("Complete Task", "No task selected.")
 
     def update_tasks(self):
         self.task_listbox.delete(0, tk.END)
